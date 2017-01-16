@@ -1,13 +1,14 @@
 #include "physic.hpp"
 
 #include "event_manager.hpp"
+#include "collisions.hpp"
 
-Collision::Collision(Character &character, const Vector2f &tile_position, Axis axis, float penetration) :
+TileCollision::TileCollision(Character &character, const Vector2f &tile_position, Axis axis, float penetration) :
     axis(axis), character(&character), tile_position(tile_position), penetration(penetration)
 {
 }
 
-bool operator<(const Collision &c1, const Collision &c2)
+bool operator<(const TileCollision &c1, const TileCollision &c2)
 {
     return (c1.penetration < c2.penetration);
 }
@@ -81,15 +82,9 @@ void Physic::clearAccumulators(RigidBody &body)
     body.temp_velocity.clear();
 }
 
-bool Physic::collide(const RigidBody &b1, const RigidBody &b2)
+std::priority_queue<TileCollision> Physic::generateCollisions(const Terrain &terrain, Character &character)
 {
-    return (getPenetrationOnXAxis(b1, b2) != 0.f &&
-            getPenetrationOnYAxis(b1, b2) != 0.f);
-}
-
-std::priority_queue<Collision> Physic::generateCollisions(const Terrain &terrain, Character &character)
-{
-    std::priority_queue<Collision> collisions;
+    std::priority_queue<TileCollision> collisions;
 
     RigidBody tile;
     tile.size = Vector2f(1.f, 1.f);
@@ -106,16 +101,16 @@ std::priority_queue<Collision> Physic::generateCollisions(const Terrain &terrain
             {
                 tile.position = Vector2f(x, y);
 
-                Vector2f penetration(getPenetrationOnXAxis(character.body, tile),
-                                     getPenetrationOnYAxis(character.body, tile));
+                Vector2f penetration(Collisions::getPenetrationOnXAxis(character.body, tile),
+                                     Collisions::getPenetrationOnYAxis(character.body, tile));
 
                 if (penetration.x < 0.f && penetration.y < 0.f)
                 {
-                    collisions.push(Collision(character,
-                                              tile.position,
-                                              penetration.x > penetration.y ?
-                                                  Collision::Axis::X : Collision::Axis::Y,
-                                              std::abs(penetration.x * penetration.y)));
+                    collisions.push(TileCollision(character,
+                                                  tile.position,
+                                                  penetration.x > penetration.y ?
+                                                      TileCollision::Axis::X : TileCollision::Axis::Y,
+                                                  std::abs(penetration.x * penetration.y)));
                 }
             }
         }
@@ -123,7 +118,7 @@ std::priority_queue<Collision> Physic::generateCollisions(const Terrain &terrain
     return (collisions);
 }
 
-void Physic::resolve(std::priority_queue<Collision> collisions)
+void Physic::resolve(std::priority_queue<TileCollision> collisions)
 {
     unsigned char nb_resolutions = 0;
 
@@ -135,66 +130,17 @@ void Physic::resolve(std::priority_queue<Collision> collisions)
     }
 }
 
-void Physic::resolve(const Collision &collision)
+void Physic::resolve(const TileCollision &collision)
 {
     RigidBody tile;
     tile.size = Vector2f(1.f, 1.f);
     tile.position = collision.tile_position;
 
-    if (!collision.character || !collide(collision.character->body, tile))
+    if (!collision.character || !Collisions::collide(collision.character->body, tile))
         return;
 
-    if (collision.axis == Collision::Axis::X)
-    {
-        if (collision.character->body.position.x < collision.tile_position.x)
-            collision.character->body.position.x =
-                (int)(collision.character->body.position.x + collision.character->body.size.x) -
-                    collision.character->body.size.x;
-        else
-            collision.character->body.position.x = (int)(collision.character->body.position.x + 1);
+    Collisions::resolveWithStatic(collision.character->body, tile);
 
-        collision.character->body.velocity.x = 0.f;
-    }
-    else
-    {
-        if (collision.character->body.position.y < collision.tile_position.y)
-            collision.character->body.position.y =
-                (int)(collision.character->body.position.y + collision.character->body.size.y) -
-                    collision.character->body.size.y;
-        else
-            collision.character->body.position.y = (int)(collision.character->body.position.y + 1);
-
-        collision.character->body.velocity.y = 0.f;
-    }
-
-    EventManager<Collision>::fire(collision);
-}
-
-float Physic::getPenetrationOnXAxis(const RigidBody &b1, const RigidBody &b2)
-{
-    if (b1.position.x < b2.position.x)
-    {
-        float result = b2.position.x - b1.position.x - b1.size.x;
-        return (result < 0.f ? result : 0.f);
-    }
-    else
-    {
-        float result = b1.position.x - b2.position.x - b2.size.x;
-        return (result < 0.f ? result : 0.f);
-    }
-}
-
-float Physic::getPenetrationOnYAxis(const RigidBody &b1, const RigidBody &b2)
-{
-    if (b1.position.y < b2.position.y)
-    {
-        float result = b2.position.y - b1.position.y - b1.size.y;
-        return (result < 0.f ? result : 0.f);
-    }
-    else
-    {
-        float result = b1.position.y - b2.position.y - b2.size.y;
-        return (result < 0.f ? result : 0.f);
-    }
+    EventManager<TileCollision>::fire(collision);
 }
 

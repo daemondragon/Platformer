@@ -32,8 +32,8 @@ bool Terrain::create(unsigned short width, unsigned short height)
 
 bool Terrain::isInside(unsigned short x, unsigned short y) const
 {
-	return (0 <= x && x < width &&
-			0 <= y && y < height);
+	return (x < width &&
+			y < height);
 }
 
 unsigned short Terrain::getWidth() const

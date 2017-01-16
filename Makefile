@@ -18,7 +18,7 @@ $(OBJS) : $(OBJDIR)/%.o : $(SRCDIR)/%.$(FILE_TYPE)
 	$(CC) $< -c -o $@ $(FLAGS) $(LIBFLAGS)
 
 clean :
-	rm -f $(OBJS) $(TARGET)
+	$(RM) $(TARGET) $(OBJDIR)/*.o
 
 makedir :
 	@mkdir -p $(OBJDIR)

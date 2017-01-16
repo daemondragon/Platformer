@@ -5,7 +5,7 @@
 
 #include "game.hpp"
 
-class Collision
+class TileCollision
 {
     public:
         enum class Axis
@@ -13,10 +13,10 @@ class Collision
             X, Y
         };
 
-        Collision(Character &character, const Vector2f &tile_position,
+        TileCollision(Character &character, const Vector2f &tile_position,
                   Axis axis, float penetration);
 
-        friend bool operator<(const Collision &c1, const Collision &c2);
+        friend bool operator<(const TileCollision &c1, const TileCollision &c2);
 
         Axis        axis;
         Character   *character;
@@ -38,20 +38,14 @@ class Physic : public Module
         float           getUpdateStep() const;
 
         void            update(World &world, bool &quit);
-
-        bool            collide(const RigidBody &b1, const RigidBody &b2);
     private:
         void            update(RigidBody &body, float delta_time);
         void            clearAccumulators(RigidBody &body);
 
         //Only background are used for physic
-        std::priority_queue<Collision>  generateCollisions(const Terrain &terrain, Character &body);
-        void                            resolve(std::priority_queue<Collision> collisions);
-        void                            resolve(const Collision &collision);
-
-        static float    getPenetrationOnXAxis(const RigidBody &b1, const RigidBody &b2);
-        static float    getPenetrationOnYAxis(const RigidBody &b1, const RigidBody &b2);
-        
+        std::priority_queue<TileCollision>  generateCollisions(const Terrain &terrain, Character &body);
+        void                                resolve(std::priority_queue<TileCollision> collisions);
+        void                                resolve(const TileCollision &collision);        
 
         Vector2f        gravity;
         //Never try to correct more than max_resolutions collisions per frames, even if they are no longer valid

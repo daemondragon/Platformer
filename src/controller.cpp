@@ -11,7 +11,7 @@ Controller::Controller()
     loadTilesInfos("data/infos/tiles.txt");
     loadCharactersInfos("data/infos/characters.txt");
 
-    EventManager<Collision>::addListener([this](const Collision &col){this->placeOnGround(col);});
+    EventManager<TileCollision>::addListener([this](const TileCollision &col){this->placeOnGround(col);});
 }
 
 bool Controller::loadTilesInfos(const std::string &filename)
@@ -122,8 +122,8 @@ void Controller::update(World &world, bool &quit)
 {
 }
 
-void Controller::placeOnGround(const Collision &col)
+void Controller::placeOnGround(const TileCollision &col)
 {
-    if (col.character && col.axis == Collision::Axis::Y && col.tile_position.y > col.character->body.position.y)
+    if (col.character && col.axis == TileCollision::Axis::Y && col.tile_position.y > col.character->body.position.y)
         col.character->on_ground = true;
 }

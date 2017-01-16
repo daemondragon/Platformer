@@ -14,7 +14,7 @@ class Controller : public Module
 
         virtual void update(World &world, bool &quit);
 
-        void placeOnGround(const Collision &col);
+        void placeOnGround(const TileCollision &col);
 
     private:
         bool loadTilesInfos(const std::string &filename);
