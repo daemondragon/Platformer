@@ -41,7 +41,40 @@ bool collide(const RigidBody &b1, const RigidBody &b2)
 //Both body can be moved to correct the collision
 void resolveWithDynamic(RigidBody &b1, RigidBody &b2)
 {
-    //TODO: implement
+    Vector2f    penetration(getPenetrationOnXAxis(b1, b2),
+                            getPenetrationOnYAxis(b1, b2));
+
+    if (penetration.x > penetration.y)
+    {// X axis collision
+        float center_x = (b1.position.x + b2.position.x) * 0.5f;
+        if (b1.position.x < b2.position.x)
+        {
+            b1.position.x = center_x - b1.size.x;
+            b2.position.x = center_x;
+        }
+        else
+        {
+            b1.position.x = center_x;
+            b2.position.x = center_x - b2.size.x;
+        }
+        b1.velocity.x = b2.velocity.x = (b1.velocity.x + b2.velocity.x) * 0.5f;
+    }
+    else
+    {// Y axis collision
+        float center_y = (b1.position.y + b2.position.y) * 0.5f;
+        if (b1.position.y < b2.position.y)
+        {
+            b1.position.y = center_y - b1.size.y;
+            b2.position.y = center_y;
+        }
+        else
+        {
+            b1.position.y = center_y;
+            b2.position.y = center_y - b2.size.y;
+        }
+
+        b1.velocity.y = b2.velocity.y = (b1.velocity.y + b2.velocity.y) * 0.5f;
+    }
 }
 
 //Only the first body can be moved to correct the collision
