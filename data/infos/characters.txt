@@ -1,0 +1,4 @@
+ID              0
+MOVE_VELOCITY   10.f
+JUMP_VELOCITY   10.f
+
