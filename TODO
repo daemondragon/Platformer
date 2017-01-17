@@ -1,0 +1,11 @@
+high:
+- display character texture (no more green rectangle)
+- add animations
+
+medium:
+- save/load terrain + texture variant (variant is only cosmetic)
+- add weapon + arrow
+
+low:
+- add gravity scale to RigidBody
+- add animations to terrains (ex: torch, water...)
