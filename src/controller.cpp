@@ -8,62 +8,9 @@
 
 Controller::Controller()
 {
-    loadTilesInfos("data/infos/tiles.txt");
     loadCharactersInfos("data/infos/characters.txt");
 
     EventManager<TileCollision>::addListener([this](const TileCollision &col){this->placeOnGround(col);});
-}
-
-bool Controller::loadTilesInfos(const std::string &filename)
-{
-    std::ifstream file(filename, std::ifstream::in);
-    if (!file.is_open())
-    {
-        std::cout << "Can't open " << filename << " for parsing" << std::endl;
-        return (false);
-    }
-    else
-        std::cout << "Opened " << filename << " for parsing" << std::endl;
-
-    Tile::clearAllInfos();
-
-    Parser parser('#', '[', ']');
-
-    TileInfos infos;
-    unsigned short current_id = 0;
-
-    std::string line;
-    while (std::getline(file, line))
-    {
-        std::string key;
-        std::string value;
-
-        if (parser.parseLine(line, key, value))
-        {
-            try
-            {
-                if (key == "ID")
-                {
-                        Tile::setInfosFor(infos, current_id);
-                        current_id = std::stoi(value);
-                        infos = TileInfos();
-                }
-                else if (key == "SOLID")
-                    infos.solid = value.at(0) == 'T' || value.at(0) == 't';
-                else if (key == "TRANSPARENT")
-                     infos.transparent = value.at(0) == 'T' || value.at(0) == 't';
-                else
-                     std::cout << "Warning while parsing: " << key << " isn't a key" << std::endl;                   
-            }
-            catch (std::exception &e)
-            {
-                std::cout << "Error while parsing " << filename << ": " << e.what() << std::endl;
-            }
-        }
-    }
-    Tile::setInfosFor(infos, current_id);
-
-    return (true);
 }
 
 bool Controller::loadCharactersInfos(const std::string &filename)

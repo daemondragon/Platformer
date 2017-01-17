@@ -40,9 +40,10 @@ class Physic : public Module
         void            update(World &world, bool &quit);
     private:
         void            update(RigidBody &body, float delta_time);
-        void            clearAccumulators(RigidBody &body);
+        void            updateCharacters(World &world);
+        void            clearAllAccumulators(World &world);
 
-        //Only background are used for physic
+        //Only foreground are used for physic (if tile.id != 0 -> solid)
         std::priority_queue<TileCollision>  generateCollisions(const Terrain &terrain, Character &body);
         void                                resolve(std::priority_queue<TileCollision> collisions);
         void                                resolve(const TileCollision &collision);        

@@ -1,23 +1,14 @@
 #ifndef TILE_HPP
 #define TILE_HPP
 
-#include "object.hpp"
-
-class TileInfos
-{
-    public:
-        TileInfos();
-
-        bool    solid;
-        bool    transparent;
-};
-
-class Tile : public Object<TileInfos>
+class Tile
 {
     public:
         Tile(unsigned short id = 0);
 
-    private:
+        bool    isSolid() const;
+
+        unsigned short id;
 };
 
 #endif

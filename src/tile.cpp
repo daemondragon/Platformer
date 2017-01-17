@@ -1,9 +1,10 @@
 #include "tile.hpp"
 
-TileInfos::TileInfos() : solid(false), transparent(true)
+Tile::Tile(unsigned short id) : id(id)
 {
 }
 
-Tile::Tile(unsigned short id) : Object(id)
+bool Tile::isSolid() const
 {
+    return (id != 0);
 }

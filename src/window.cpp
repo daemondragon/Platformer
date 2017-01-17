@@ -105,6 +105,15 @@ void Window::render(World &world, sf::View &view)
 
 void Window::render(Terrain &terrain, Terrain::Ground ground)
 {
+    sf::Sprite sprite;
+    sf::Texture texture = textures.get(
+                              ground == Terrain::Ground::Back ?
+                                  TextureType::Background : TextureType::Foreground,
+                              0);//0 is the ground variant (will be change later)
+
+    sprite.setTexture(texture);
+    int nb_tiles_width = texture.getSize().x / tile_size.x;
+
     for (int y = 0; y < terrain.getHeight(); ++y)
     {
         for (int x = 0; x < terrain.getWidth(); ++x)
@@ -112,14 +121,8 @@ void Window::render(Terrain &terrain, Terrain::Ground ground)
             Tile tile = terrain.get(ground, x, y);
             if (tile.id)
             {
-                sf::Texture texture = textures.get(
-                    ground == Terrain::Ground::Back ? TextureType::Background : TextureType::Foreground,
-                    tile.id);
-                sf::Sprite sprite;
-                sprite.setTexture(texture);
-                int nb_tiles_width = texture.getSize().x / tile_size.x;
-                sprite.setTextureRect(sf::IntRect(tile.variant % nb_tiles_width * tile_size.x,
-                                                  tile.variant / nb_tiles_width * tile_size.y,
+                sprite.setTextureRect(sf::IntRect(tile.id % nb_tiles_width * tile_size.x,
+                                                  tile.id / nb_tiles_width * tile_size.y,
                                                   tile_size.x, tile_size.y));
                 sprite.setPosition(x * tile_size.x, y * tile_size.y);
                 screen.draw(sprite);
@@ -140,13 +143,16 @@ void Window::render(Character &character)
 
 void Window::loadTextures()
 {
-    //The idea is to have background and foreground separated,
-    //and each id contain one type of block
-    textures.load("data/background/dirt.png"    , TextureType::Background, 1);
-    textures.load("data/background/stone.png"   , TextureType::Background, 2);
-    textures.load("data/background/leaf.png"    , TextureType::Background, 3);
-    textures.load("data/background/brick.png"   , TextureType::Background, 4);
-    textures.load("data/background/roof.png"    , TextureType::Background, 5);
-    textures.load("data/background/cloud.png"   , TextureType::Background, 6);
+    textures.load("data/background/0.png", TextureType::Background, 0);
+    textures.load("data/background/1.png", TextureType::Background, 1);
+    textures.load("data/background/2.png", TextureType::Background, 2);
+    textures.load("data/background/3.png", TextureType::Background, 3);
+    textures.load("data/background/4.png", TextureType::Background, 4);
+
+    textures.load("data/foreground/0.png", TextureType::Foreground, 0);
+    textures.load("data/foreground/1.png", TextureType::Foreground, 1);
+    textures.load("data/foreground/2.png", TextureType::Foreground, 2);
+    textures.load("data/foreground/3.png", TextureType::Foreground, 3);
+    textures.load("data/foreground/4.png", TextureType::Foreground, 4);
 }
 

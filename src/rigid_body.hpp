@@ -13,6 +13,11 @@ class RigidBody
         Vector2f    acceleration;
 
         Vector2f    temp_velocity;//velocity that last only one frame
+
+        void        clearAccumulators()
+        {
+            temp_velocity.clear();
+        }
 };
 
 #endif

@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
             if (x == 0 || x + 1 == game.world.terrain.getWidth() ||
                 y == 0 || y + 1 == game.world.terrain.getHeight())
             {
-                game.world.terrain.set(Tile(1), Terrain::Ground::Back, x, y);
+                game.world.terrain.set(Tile(1), Terrain::Ground::Fore, x, y);
             }
         }
     }
@@ -30,8 +30,8 @@ int main(int argc, char *argv[])
     game.world.characters.front()->body.size = Vector2f(0.95, 1.95);
 
     Window window(640, 480, "squarevilles");
-    window.setTileSize(sf::Vector2u(8, 8));
-    window.setZoom(4);
+    window.setTileSize(sf::Vector2u(16, 16));
+    window.setZoom(3);
 
     Physic physic;
     physic.setGravity(Vector2f(0.f, 4.5f));

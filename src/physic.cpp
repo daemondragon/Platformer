@@ -56,17 +56,12 @@ void Physic::update(World &world, bool &quit)
     remaining_time += world.delta_time;
     while (remaining_time >= update_step)
     {
-        for (auto &character : world.characters)
-        {
-            update(character->body, update_step);
-            resolve(generateCollisions(world.terrain, *character));
-        }
+        updateCharacters(world);
 
         remaining_time -= update_step;
     }
 
-    for (auto &character : world.characters)
-        clearAccumulators(character->body);
+    clearAllAccumulators(world);
 }
 
 void Physic::update(RigidBody &body, float delta_time)
@@ -77,9 +72,19 @@ void Physic::update(RigidBody &body, float delta_time)
     body.velocity += (body.acceleration + gravity) * delta_time;
 }
 
-void Physic::clearAccumulators(RigidBody &body)
+void Physic::updateCharacters(World &world)
 {
-    body.temp_velocity.clear();
+    for (auto &character : world.characters)
+    {
+        update(character->body, update_step);
+        resolve(generateCollisions(world.terrain, *character));
+    }
+}
+
+void Physic::clearAllAccumulators(World &world)
+{
+    for (auto &character : world.characters)
+        character->body.clearAccumulators();
 }
 
 std::priority_queue<TileCollision> Physic::generateCollisions(const Terrain &terrain, Character &character)
@@ -97,7 +102,7 @@ std::priority_queue<TileCollision> Physic::generateCollisions(const Terrain &ter
         for (int x = start.x; x <= end.x; ++x)
         {
             if (terrain.isInside(x, y) &&
-                terrain.get(Terrain::Ground::Back, x, y).getInfos().solid)
+                terrain.get(Terrain::Ground::Fore, x, y).isSolid())
             {
                 tile.position = Vector2f(x, y);
 
