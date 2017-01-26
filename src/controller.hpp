@@ -1,24 +1,13 @@
 #ifndef CONTROLLER_HPP
 #define CONTROLLER_HPP
 
-#include <string>
+class Character;
 
-#include "physic.hpp"
-#include "game.hpp"
-
-class Controller : public Module
+//a controller can be anything : a keyboard, a gamepads, an AI..
+class Controller
 {
     public:
-        //load infos files and set everything
-        Controller();
-
-        virtual void update(World &world, bool &quit);
-
-        void placeOnGround(const TileCollision &col);
-
-    private:
-        bool loadTilesInfos(const std::string &filename);
-        bool loadCharactersInfos(const std::string &filename);
+        virtual void update(Character &character) = 0;
 };
 
 #endif

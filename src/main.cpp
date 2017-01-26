@@ -6,7 +6,7 @@
 #include "world.hpp"
 #include "window.hpp"
 #include "physic.hpp"
-#include "controller.hpp"
+#include "logic.hpp"
 #include "event_manager.hpp"
 
 int main(int argc, char *argv[])
@@ -25,24 +25,33 @@ int main(int argc, char *argv[])
         }
     }
 
+    std::shared_ptr<KeyboardController> keyboard(new KeyboardController());
+
     game.world.characters.push_back(std::move(std::unique_ptr<Character>(new Character())));
     game.world.characters.front()->body.position = Vector2f(2.f, 4.f);
     game.world.characters.front()->body.size = Vector2f(0.95, 1.95);
+    game.world.characters.front()->controller = keyboard;
+
+    game.world.characters.push_front(std::move(std::unique_ptr<Character>(new Character())));
+    game.world.characters.front()->body.position = Vector2f(5.f, 3.f);
+    game.world.characters.front()->body.size = Vector2f(0.95, 1.95);
+    game.world.characters.front()->controller = keyboard;
 
     Window window(640, 480, "squarevilles");
     window.setTileSize(sf::Vector2u(16, 16));
-    window.setZoom(3);
+    window.setDesiredFPS(120);
+    window.setZoom(2);
 
     Physic physic;
     physic.setGravity(Vector2f(0.f, 4.5f));
     physic.setMaxResolutions(5);
     physic.setUpdateStep(0.033);// ~30 updates/second
 
-    Controller controller;
+    Logic logic;
 
     game.add(window);
     game.add(physic);
-    game.add(controller);
+    game.add(logic);
 
     game.runLoop();    
 }

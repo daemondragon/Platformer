@@ -7,7 +7,6 @@ Window::Window(unsigned short width, unsigned short height, std::string title) :
     screen(sf::VideoMode(width, height), title), tile_size(8, 8), zoom(1)
 {
     //Show loading screen ?
-    screen.setFramerateLimit(60);
     view = screen.getView();
     loadTextures();
 }
@@ -27,6 +26,11 @@ void Window::setZoom(unsigned char zoom)
 {
     this->zoom = zoom > 0 ? zoom : 1;
     view.zoom(1.f / this->zoom);
+}
+
+void Window::setDesiredFPS(unsigned char fps)
+{
+    screen.setFramerateLimit(fps);
 }
 
 void Window::centerViewAt(sf::View &view, Terrain &terrain, Vector2f center)
@@ -79,13 +83,6 @@ void Window::processInput(World &world, bool &quit)
             view.zoom(1.f / zoom);
         }
     }
-
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        world.characters.front()->perform(Move(Character::Direction::Left));
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        world.characters.front()->perform(Move(Character::Direction::Right));
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        world.characters.front()->perform(Jump());
 }
 
 void Window::render(World &world, sf::View &view)
@@ -154,5 +151,17 @@ void Window::loadTextures()
     textures.load("data/foreground/2.png", TextureType::Foreground, 2);
     textures.load("data/foreground/3.png", TextureType::Foreground, 3);
     textures.load("data/foreground/4.png", TextureType::Foreground, 4);
+}
+
+
+
+void KeyboardController::update(Character &character)
+{
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+        character.perform(Move(Character::Direction::Left));
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+        character.perform(Move(Character::Direction::Right));
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
+        character.perform(Jump());
 }
 

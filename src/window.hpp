@@ -16,6 +16,7 @@ class Window : public Module
         sf::Vector2u    getTileSize() const;
 
         void            setZoom(unsigned char zoom);
+        void            setDesiredFPS(unsigned char fps);
         void            centerViewAt(sf::View &view, Terrain &terrain,
                                      Vector2f center);
 
@@ -45,6 +46,12 @@ class Window : public Module
         };
 
         TexturesManager<TextureType>     textures;
+};
+
+class KeyboardController : public Controller
+{
+    public:
+        virtual void    update(Character &character);
 };
 
 #endif

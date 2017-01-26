@@ -1,4 +1,4 @@
-#include "controller.hpp"
+#include "logic.hpp"
 
 #include <iostream>
 #include <fstream>
@@ -6,14 +6,14 @@
 #include "event_manager.hpp"
 #include "parser.hpp"
 
-Controller::Controller()
+Logic::Logic()
 {
     loadCharactersInfos("data/infos/characters.txt");
 
     EventManager<TileCollision>::addListener([this](const TileCollision &col){this->placeOnGround(col);});
 }
 
-bool Controller::loadCharactersInfos(const std::string &filename)
+bool Logic::loadCharactersInfos(const std::string &filename)
 {
     std::ifstream file(filename, std::ifstream::in);
     if (!file.is_open())
@@ -65,11 +65,14 @@ bool Controller::loadCharactersInfos(const std::string &filename)
     return (true);
 }
 
-void Controller::update(World &world, bool &quit)
+void Logic::update(World &world, bool &quit)
 {
+    for (auto &character : world.characters)
+        if (character->controller)
+            character->controller->update(*character);
 }
 
-void Controller::placeOnGround(const TileCollision &col)
+void Logic::placeOnGround(const TileCollision &col)
 {
     if (col.character && col.axis == TileCollision::Axis::Y && col.tile_position.y > col.character->body.position.y)
         col.character->on_ground = true;
