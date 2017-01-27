@@ -12,7 +12,9 @@
 int main(int argc, char *argv[])
 {
     Game game;
+
     game.world.terrain.create(30, 20);
+    game.world.terrain.setWorldType(2);
     for (int y = 0; y < game.world.terrain.getHeight(); ++y)
     {
         for (int x = 0; x < game.world.terrain.getWidth(); ++x)
@@ -24,6 +26,8 @@ int main(int argc, char *argv[])
             }
         }
     }
+    if (!game.world.terrain.save("test.ct"))
+        std::cout << "failed saving" << std::endl;
 
     std::shared_ptr<KeyboardController> keyboard(new KeyboardController());
 
@@ -43,7 +47,7 @@ int main(int argc, char *argv[])
     window.setZoom(2);
 
     Physic physic;
-    physic.setGravity(Vector2f(0.f, 4.5f));
+    physic.setGravity(Vector2f(0.f, 9.81f));
     physic.setMaxResolutions(5);
     physic.setUpdateStep(0.033);// ~30 updates/second
 

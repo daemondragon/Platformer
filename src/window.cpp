@@ -106,7 +106,7 @@ void Window::render(Terrain &terrain, Terrain::Ground ground)
     sf::Texture texture = textures.get(
                               ground == Terrain::Ground::Back ?
                                   TextureType::Background : TextureType::Foreground,
-                              0);//0 is the ground variant (will be change later)
+                              terrain.getWorldType());
 
     sprite.setTexture(texture);
     int nb_tiles_width = texture.getSize().x / tile_size.x;

@@ -2,6 +2,7 @@
 #define TERRAIN_HPP
 
 #include <vector>
+#include <string>
 
 #include "tile.hpp"
 
@@ -21,6 +22,8 @@ class Terrain
 
 		unsigned short	getWidth() const;
 		unsigned short	getHeight() const;
+		void            setWorldType(unsigned short type);
+		unsigned short  getWorldType() const;
 
 		Tile&           get(Ground ground, unsigned short x, unsigned short y);
 		const Tile&		get(Ground ground, unsigned short x, unsigned short y) const;
@@ -29,9 +32,13 @@ class Terrain
 		void			set(const Tile &tile, Ground ground, unsigned short x, unsigned short y);
 		void			tryAndSet(const Tile &tile, Ground ground, unsigned short x, unsigned short y);
 
+        bool            save(const std::string &filename) const;
+        bool            load(const std::string &filename);
+
 	private:
 	    unsigned short width;
 	    unsigned short height;
+	    unsigned short world_type;
 
 	    std::vector<Tile>   tiles;
 };

@@ -1,9 +1,10 @@
 #include "terrain.hpp"
 
 #include <stdexcept>
+#include <fstream>
 #include <string>//For std::to_string()
 
-Terrain::Terrain() : width(0), height(0)
+Terrain::Terrain() : width(0), height(0), world_type(0)
 {
 }
 
@@ -44,6 +45,16 @@ unsigned short Terrain::getWidth() const
 unsigned short Terrain::getHeight() const
 {
 	return (height);
+}
+
+void Terrain::setWorldType(unsigned short type)
+{
+    world_type = type;
+}
+
+unsigned short Terrain::getWorldType() const
+{
+    return (world_type);
 }
 
 Tile& Terrain::get(Ground ground, unsigned short x, unsigned short y)
@@ -89,5 +100,39 @@ void Terrain::tryAndSet(const Tile &tile, Ground ground, unsigned short x, unsig
 					std::to_string(y) + ")");
 
     set(tile, ground, x, y);
+}
+
+#include <iostream>
+
+bool Terrain::save(const std::string &filename) const
+{
+    std::ofstream file(filename, std::ofstream::binary);
+    if (!file.is_open())
+        return (false);
+
+    file.write((const char*)&world_type     , sizeof(unsigned short));
+    file.write((const char*)&width          , sizeof(unsigned short));
+    file.write((const char*)&height         , sizeof(unsigned short));
+    file.write((const char*)&tiles.front()  , sizeof(Tile) * width * height * 2);//2 ground
+
+    return (true);
+}
+
+bool Terrain::load(const std::string &filename)
+{
+    std::ifstream file(filename, std::ifstream::binary);
+    if (!file.is_open())
+        return (false);
+
+    file.read((char*)&world_type    , sizeof(unsigned short));
+    file.read((char*)&width         , sizeof(unsigned short));
+    file.read((char*)&height        , sizeof(unsigned short));
+
+    if (!create(width, height))
+        return (false);
+
+    file.read((char*)&tiles.front() , sizeof(Tile) * width * height * 2);// (2 ground)
+
+    return (true);
 }
 
