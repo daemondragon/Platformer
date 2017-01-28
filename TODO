@@ -8,5 +8,4 @@ medium:
 low:
 - add gravity scale to RigidBody
 - add animations to terrains (ex: torch, water...)
-- add Gamepad support
 - add splitscreen

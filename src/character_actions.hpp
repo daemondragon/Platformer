@@ -25,4 +25,15 @@ class Move : public Action
         Character::Direction direction;
 };
 
+class Aim : public Action
+{
+    public:
+        Aim(Vector2f direction);
+
+        virtual void perform(Character &character) const;
+
+    private:
+        Character::Direction    global_direction;
+        Bow::Direction          local_direction;
+};
 #endif

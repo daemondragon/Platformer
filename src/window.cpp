@@ -136,32 +136,93 @@ void Window::render(Character &character)
     rectangle.setPosition(character.body.position.x * tile_size.x,
                           character.body.position.y * tile_size.y);
     screen.draw(rectangle);
+
+    sf::CircleShape aim(tile_size.x / 8);
+    aim.setFillColor(sf::Color(255, 0, 0));
+
+    sf::Vector2f relative_position;
+    if ((int)Bow::Direction::Top & (int)character.bow.direction)
+        relative_position.y = -1.f;
+    else if ((int)Bow::Direction::Bottom & (int)character.bow.direction)
+        relative_position.y = 1.f;
+
+    if ((int)Bow::Direction::Front & (int)character.bow.direction)
+        relative_position.x = (character.direction == Character::Direction::Left ? -1.f : 1.f);
+    
+    aim.setPosition((character.body.position.x + character.body.size.x / 2 + relative_position.x) * tile_size.x,
+                          (character.body.position.y + character.body.size.y / 2 + relative_position.y) * tile_size.y);
+
+    screen.draw(aim);
 }
 
 void Window::loadTextures()
 {
-    textures.load("data/background/0.png", TextureType::Background, 0);
-    textures.load("data/background/1.png", TextureType::Background, 1);
-    textures.load("data/background/2.png", TextureType::Background, 2);
-    textures.load("data/background/3.png", TextureType::Background, 3);
-    textures.load("data/background/4.png", TextureType::Background, 4);
+    textures.load("data/images/back_0.png", TextureType::Background, 0);
+    textures.load("data/images/back_1.png", TextureType::Background, 1);
+    textures.load("data/images/back_2.png", TextureType::Background, 2);
+    textures.load("data/images/back_3.png", TextureType::Background, 3);
+    textures.load("data/images/back_4.png", TextureType::Background, 4);
 
-    textures.load("data/foreground/0.png", TextureType::Foreground, 0);
-    textures.load("data/foreground/1.png", TextureType::Foreground, 1);
-    textures.load("data/foreground/2.png", TextureType::Foreground, 2);
-    textures.load("data/foreground/3.png", TextureType::Foreground, 3);
-    textures.load("data/foreground/4.png", TextureType::Foreground, 4);
+    textures.load("data/images/fore_0.png", TextureType::Foreground, 0);
+    textures.load("data/images/fore_1.png", TextureType::Foreground, 1);
+    textures.load("data/images/fore_2.png", TextureType::Foreground, 2);
+    textures.load("data/images/fore_3.png", TextureType::Foreground, 3);
+    textures.load("data/images/fore_4.png", TextureType::Foreground, 4);
 }
 
 
 
 void KeyboardController::update(Character &character)
 {
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        character.perform(Move(Character::Direction::Left));
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-        character.perform(Move(Character::Direction::Right));
+    if (!sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+    {//Move
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            character.perform(Move(Character::Direction::Left));
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            character.perform(Move(Character::Direction::Right));
+    }
+    else
+    {//Aim
+        Vector2f direction;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
+            direction.x -= 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
+            direction.x += 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
+            direction.y -= 1.f;
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
+            direction.y += 1.f;
+
+        character.perform(Aim(direction));
+    }
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         character.perform(Jump());
 }
 
+GamepadController::GamepadController(unsigned short id) : id(id)
+{
+}
+
+void GamepadController::update(Character &character)
+{
+    if (!sf::Joystick::isConnected(id))
+        return;
+
+    if (!sf::Joystick::isButtonPressed(id, 1))
+    {//Move
+        float direction = sf::Joystick::getAxisPosition(id, sf::Joystick::Axis::X) / 100.0;
+        if (std::abs(direction) < 0.5)
+            return;
+
+        character.perform(Move(direction < 0.f ? Character::Direction::Left :
+                                                 Character::Direction::Right));
+    }
+    else
+    {//Aim
+        character.perform(Aim(Vector2f(sf::Joystick::getAxisPosition(id, sf::Joystick::Axis::X),
+                                       sf::Joystick::getAxisPosition(id, sf::Joystick::Axis::Y))));   
+    }
+
+    if (sf::Joystick::isButtonPressed(id, 0))
+         character.perform(Jump());	
+}
