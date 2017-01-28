@@ -24,7 +24,10 @@ void Move::perform(Character &character) const
 Aim::Aim(Vector2f direction)
 {
     if (direction.x == 0.f && direction.y == 0.f)
+    {
+        local_direction = Bow::Direction::Front;
         return;
+    }
 
     direction.normalize();
     float ratio = std::abs(direction.x / direction.y);
@@ -53,3 +56,9 @@ void Aim::perform(Character &character) const
     character.direction = global_direction;
     character.bow.direction = local_direction;
 }
+
+void StopAim::perform(Character &character) const
+{
+    character.bow.direction = Bow::Direction::Front;
+}
+

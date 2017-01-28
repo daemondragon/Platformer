@@ -1,6 +1,5 @@
 #include "window.hpp"
 
-#include "character_actions.hpp"
 #include "game.hpp"
 
 Window::Window(unsigned short width, unsigned short height, std::string title) :
@@ -170,59 +169,3 @@ void Window::loadTextures()
     textures.load("data/images/fore_4.png", TextureType::Foreground, 4);
 }
 
-
-
-void KeyboardController::update(Character &character)
-{
-    if (!sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-    {//Move
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            character.perform(Move(Character::Direction::Left));
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            character.perform(Move(Character::Direction::Right));
-    }
-    else
-    {//Aim
-        Vector2f direction;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-            direction.x -= 1.f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
-            direction.x += 1.f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
-            direction.y -= 1.f;
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
-            direction.y += 1.f;
-
-        character.perform(Aim(direction));
-    }
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        character.perform(Jump());
-}
-
-GamepadController::GamepadController(unsigned short id) : id(id)
-{
-}
-
-void GamepadController::update(Character &character)
-{
-    if (!sf::Joystick::isConnected(id))
-        return;
-
-    if (!sf::Joystick::isButtonPressed(id, 1))
-    {//Move
-        float direction = sf::Joystick::getAxisPosition(id, sf::Joystick::Axis::X) / 100.0;
-        if (std::abs(direction) < 0.5)
-            return;
-
-        character.perform(Move(direction < 0.f ? Character::Direction::Left :
-                                                 Character::Direction::Right));
-    }
-    else
-    {//Aim
-        character.perform(Aim(Vector2f(sf::Joystick::getAxisPosition(id, sf::Joystick::Axis::X),
-                                       sf::Joystick::getAxisPosition(id, sf::Joystick::Axis::Y))));   
-    }
-
-    if (sf::Joystick::isButtonPressed(id, 0))
-         character.perform(Jump());	
-}

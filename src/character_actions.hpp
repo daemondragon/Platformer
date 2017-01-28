@@ -36,4 +36,10 @@ class Aim : public Action
         Character::Direction    global_direction;
         Bow::Direction          local_direction;
 };
+
+class StopAim : public Action
+{
+    public:
+        virtual void perform(Character &character) const;
+};
 #endif

@@ -48,21 +48,4 @@ class Window : public Module
         TexturesManager<TextureType>     textures;
 };
 
-class KeyboardController : public Controller
-{
-    public:
-        virtual void    update(Character &character);
-};
-
-class GamepadController : public Controller
-{
-    public:
-        GamepadController(unsigned short id);
-
-        virtual void    update(Character &character);
-
-    protected:
-        unsigned short id;
-};
-
 #endif
