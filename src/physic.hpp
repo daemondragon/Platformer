@@ -39,14 +39,15 @@ class Physic : public Module
 
         void            update(World &world, bool &quit);
     private:
-        void            update(RigidBody &body, float delta_time);
-        void            updateCharacters(World &world);
-        void            clearAllAccumulators(World &world);
+        void            update(RigidBody &body, float delta_time) const;
+        void            move(World &world, float delta_time) const;
+        void            resolveCollisions(World &world) const;
+        void            clearAllAccumulators(World &world) const ;
 
         //Only foreground are used for physic (if tile.id != 0 -> solid)
-        std::priority_queue<TileCollision>  generateCollisions(const Terrain &terrain, Character &body);
-        void                                resolve(std::priority_queue<TileCollision> collisions);
-        void                                resolve(const TileCollision &collision);        
+        std::priority_queue<TileCollision>  generateCollisions(const Terrain &terrain, Character &body) const;
+        void                                resolve(std::priority_queue<TileCollision> collisions) const;
+        void                                resolve(const TileCollision &collision) const;
 
         Vector2f        gravity;
         //Never try to correct more than max_resolutions collisions per frames, even if they are no longer valid

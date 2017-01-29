@@ -56,7 +56,8 @@ void Physic::update(World &world, bool &quit)
     remaining_time += world.delta_time;
     while (remaining_time >= update_step)
     {
-        updateCharacters(world);
+        move(world, update_step);
+        resolveCollisions(world);
 
         remaining_time -= update_step;
     }
@@ -64,30 +65,33 @@ void Physic::update(World &world, bool &quit)
     clearAllAccumulators(world);
 }
 
-void Physic::update(RigidBody &body, float delta_time)
+void Physic::update(RigidBody &body, float delta_time) const
 {
     body.position += (body.velocity + body.temp_velocity) * delta_time +
                      body.acceleration * delta_time * delta_time * 0.5;
     //adding acceleration to position to have a better movement over irregulate frames
-    body.velocity += (body.acceleration + gravity) * delta_time;
+    body.velocity += (body.acceleration + gravity * body.gravity_scale) * delta_time;
 }
 
-void Physic::updateCharacters(World &world)
+void Physic::move(World &world, float delta_time) const
 {
     for (auto &character : world.characters)
-    {
         update(character->body, update_step);
-        resolve(generateCollisions(world.terrain, *character));
-    }
 }
 
-void Physic::clearAllAccumulators(World &world)
+void Physic::resolveCollisions(World &world) const
+{
+    for (auto &character : world.characters)
+        resolve(generateCollisions(world.terrain, *character));
+}
+
+void Physic::clearAllAccumulators(World &world) const
 {
     for (auto &character : world.characters)
         character->body.clearAccumulators();
 }
 
-std::priority_queue<TileCollision> Physic::generateCollisions(const Terrain &terrain, Character &character)
+std::priority_queue<TileCollision> Physic::generateCollisions(const Terrain &terrain, Character &character) const
 {
     std::priority_queue<TileCollision> collisions;
 
@@ -123,7 +127,7 @@ std::priority_queue<TileCollision> Physic::generateCollisions(const Terrain &ter
     return (collisions);
 }
 
-void Physic::resolve(std::priority_queue<TileCollision> collisions)
+void Physic::resolve(std::priority_queue<TileCollision> collisions) const
 {
     unsigned char nb_resolutions = 0;
 
@@ -135,7 +139,7 @@ void Physic::resolve(std::priority_queue<TileCollision> collisions)
     }
 }
 
-void Physic::resolve(const TileCollision &collision)
+void Physic::resolve(const TileCollision &collision) const
 {
     RigidBody tile;
     tile.size = Vector2f(1.f, 1.f);

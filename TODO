@@ -6,6 +6,6 @@ medium:
 - add weapon + arrow
 
 low:
-- add gravity scale to RigidBody
 - add animations to terrains (ex: torch, water...)
 - add splitscreen
+- add game mode

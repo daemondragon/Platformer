@@ -37,12 +37,12 @@ int main(int argc, char *argv[])
     game.world.characters.front()->body.position = Vector2f(2.f, 4.f);
     game.world.characters.front()->body.size = Vector2f(0.95, 1.95);
     game.world.characters.front()->controller = gamepad;
-/*
+
     game.world.characters.push_front(std::move(std::unique_ptr<Character>(new Character())));
     game.world.characters.front()->body.position = Vector2f(5.f, 3.f);
     game.world.characters.front()->body.size = Vector2f(0.95, 1.95);
     game.world.characters.front()->controller = keyboard;
-*/
+
     Window window(640, 480, "squarevilles");
     window.setTileSize(sf::Vector2u(16, 16));
     window.setDesiredFPS(120);

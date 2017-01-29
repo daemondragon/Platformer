@@ -13,11 +13,11 @@ class Vector2
 		Vector2() : x(0), y(0) {}
 		Vector2(T x, T y) : x(x), y(y) {}
 
-		T		squareLength()
+		T		squareLength() const
 		{
 			return (x * x + y * y);
 		}
-		T		length()
+		T		length()  const
 		{
 			return (sqrt(squareLength()));
 		}
@@ -27,7 +27,7 @@ class Vector2
 			x /= l;
 			y /= l;
 		}
-		Vector2<T>	normalized()
+		Vector2<T>	normalized() const
 		{
 			Vector2<T> norm(x, y);
 			norm.normalize();
@@ -39,7 +39,7 @@ class Vector2
 			x = -x;
 			y = -y;
 		}
-		Vector2<T>	inverse()
+		Vector2<T>	inverse() const
 		{
 			return (Vector2<T>(-x, -y));
 		}
@@ -87,7 +87,7 @@ class Vector2
 		}
 
 
-		T		dot(const Vector2<T> &v)
+		T		dot(const Vector2<T> &v) const
 		{
 			return (x * v.x + y * v.y);
 		}
@@ -97,7 +97,7 @@ class Vector2
 		{
 			this->add(add);
 		}
-		Vector2<T>	operator+(const Vector2<T> &add)
+		Vector2<T>	operator+(const Vector2<T> &add) const
 		{
 			return (Vector2<T>(x + add.x, y + add.y));
 		}
@@ -105,7 +105,7 @@ class Vector2
 		{
 			this->sub(sub);
 		}
-		Vector2<T>	operator-(const Vector2<T> &sub)
+		Vector2<T>	operator-(const Vector2<T> &sub) const
 		{
 			return (Vector2<T>(x - sub.x, y - sub.y));
 		}
@@ -113,7 +113,7 @@ class Vector2
 		{
 			this->mul(mul);
 		}
-		Vector2<T>	operator*(const Vector2<T> &mul)
+		Vector2<T>	operator*(const Vector2<T> &mul) const
 		{
 			return (Vector2<T>(x * mul.x, y * mul.y));
 		}
@@ -121,7 +121,7 @@ class Vector2
 		{
 			this->mul(mul);
 		}
-		Vector2<T>	operator*(const T mul)
+		Vector2<T>	operator*(const T mul) const
 		{
 			return (Vector2<T>(x * mul, y * mul));
 		}

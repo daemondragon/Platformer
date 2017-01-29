@@ -6,6 +6,8 @@
 class RigidBody
 {
     public:
+        RigidBody() : gravity_scale(1.f) {}
+
         Vector2f    position;//Top Left position
         Vector2f    size;
 
@@ -13,6 +15,7 @@ class RigidBody
         Vector2f    acceleration;
 
         Vector2f    temp_velocity;//velocity that last only one frame
+        float       gravity_scale;
 
         void        clearAccumulators()
         {

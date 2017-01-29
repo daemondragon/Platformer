@@ -30,6 +30,7 @@ void KeyboardController::update(Character &character)
 
         character.perform(Aim(direction));
     }
+
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         character.perform(Jump());
 }
