@@ -21,40 +21,38 @@ void Move::perform(Character &character) const
          character.getInfos().move_velocity);
 }
 
-Aim::Aim(Vector2f direction)
+Aim::Aim(const Vector2f &direction)
 {
-    if (direction.x == 0.f && direction.y == 0.f)
-    {
-        local_direction = Bow::Direction::Front;
-        return;
-    }
-
-    direction.normalize();
-    float ratio = std::abs(direction.x / direction.y);
-    if (ratio < 0.5 || ratio > 2.5)
-    {
-        global_direction = (direction.x < 0.f ? Character::Direction::Left :
-                                                Character::Direction::Right);
-        if (std::abs(direction.x) > std::abs(direction.y))
-            local_direction = Bow::Direction::Front;
-        else   
-            local_direction = (direction.y < 0.f ? Bow::Direction::Top :
-                                                   Bow::Direction::Bottom);
-    }
-    else
-    {//Diagonal
-        global_direction = (direction.x < 0.f ? Character::Direction::Left :
-                                               Character::Direction::Right);
-        local_direction = (direction.y < 0.f ? Bow::Direction::TopFront :
-                                               Bow::Direction::BottomFront);
-    }
-
+    if (direction.x != 0.f || direction.y != 0.f)
+        this->direction = direction.normalized();
 }
 
 void Aim::perform(Character &character) const
 {
-    character.direction = global_direction;
-    character.bow.direction = local_direction;
+    if (direction.x == 0.f && direction.y == 0.f)
+    {
+        character.bow.direction = Bow::Direction::Front;
+        return;
+    }
+
+    float ratio = std::abs(direction.x / direction.y);
+    if (ratio < 0.5 || ratio > 2.5)
+    {
+        character.direction = (direction.x < 0.f ? Character::Direction::Left :
+                                                   Character::Direction::Right);
+        if (std::abs(direction.x) > std::abs(direction.y))
+            character.bow.direction = Bow::Direction::Front;
+        else   
+            character.bow.direction = (direction.y < 0.f ? Bow::Direction::Top :
+                                                           Bow::Direction::Bottom);
+    }
+    else
+    {//Diagonal
+        character.direction = (direction.x < 0.f ? Character::Direction::Left :
+                                                   Character::Direction::Right);
+        character.bow.direction = (direction.y < 0.f ? Bow::Direction::TopFront :
+                                                       Bow::Direction::BottomFront);
+    }
 }
 
 void StopAim::perform(Character &character) const

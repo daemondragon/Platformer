@@ -28,13 +28,12 @@ class Move : public Action
 class Aim : public Action
 {
     public:
-        Aim(Vector2f direction);
+        Aim(const Vector2f &direction);
 
         virtual void perform(Character &character) const;
 
     private:
-        Character::Direction    global_direction;
-        Bow::Direction          local_direction;
+        Vector2f direction;
 };
 
 class StopAim : public Action
