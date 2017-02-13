@@ -1,9 +1,9 @@
 #include "physic.hpp"
 
 #include "event_manager.hpp"
-#include "collisions.hpp"
 
-TileCollision::TileCollision(Character &character, const Vector2f &tile_position, Axis axis, float penetration) :
+TileCollision::TileCollision(Character &character, const Vector2f &tile_position,
+                             Collisions::Axis axis, float penetration) :
     axis(axis), character(&character), tile_position(tile_position), penetration(penetration)
 {
 }
@@ -11,6 +11,12 @@ TileCollision::TileCollision(Character &character, const Vector2f &tile_position
 bool operator<(const TileCollision &c1, const TileCollision &c2)
 {
     return (c1.penetration < c2.penetration);
+}
+
+CharactersCollision::CharactersCollision(Character &c1, Character &c2, Collisions::Axis axis) :
+    c1(&c1), c2(&c2), axis(axis)
+{
+
 }
 
 Physic::Physic() : 
@@ -83,12 +89,33 @@ void Physic::resolveCollisions(World &world) const
 {
     for (auto &character : world.characters)
         resolve(generateCollisions(world.terrain, *character));
+    
+    generateCollisions(world.characters);
 }
 
 void Physic::clearAllAccumulators(World &world) const
 {
     for (auto &character : world.characters)
         character->body.clearAccumulators();
+}
+
+void Physic::generateCollisions(std::list<std::unique_ptr<Character>> &characters) const
+{
+    for (auto it = characters.begin(); it != characters.end(); it++)
+    {
+        auto it2 = it;
+        for (it2++; it2 != characters.end(); it2++)
+        {
+            Vector2f penetration = Collisions::getPenetration((*it)->body, (*it2)->body);
+            if (penetration.x != 0.f && penetration.y != 0.f)
+            {
+                Collisions::resolveWithDynamic((*it)->body, (*it2)->body);
+
+                EventManager<CharactersCollision>::fire(CharactersCollision(*(*it), *(*it2),
+                    (abs(penetration.x) < abs(penetration.y) ? Collisions::Axis::X : Collisions::Axis::Y)));
+            }
+        }
+    }
 }
 
 std::priority_queue<TileCollision> Physic::generateCollisions(const Terrain &terrain, Character &character) const
@@ -118,7 +145,7 @@ std::priority_queue<TileCollision> Physic::generateCollisions(const Terrain &ter
                     collisions.push(TileCollision(character,
                                                   tile.position,
                                                   penetration.x > penetration.y ?
-                                                      TileCollision::Axis::X : TileCollision::Axis::Y,
+                                                      Collisions::Axis::X : Collisions::Axis::Y,
                                                   std::abs(penetration.x * penetration.y)));
                 }
             }

@@ -3,25 +3,31 @@
 
 #include <queue>
 
+#include "collisions.hpp"
 #include "game.hpp"
 
 class TileCollision
 {
     public:
-        enum class Axis
-        {
-            X, Y
-        };
-
         TileCollision(Character &character, const Vector2f &tile_position,
-                  Axis axis, float penetration);
+                  Collisions::Axis axis, float penetration);
 
         friend bool operator<(const TileCollision &c1, const TileCollision &c2);
 
-        Axis        axis;
-        Character   *character;
-        Vector2f    tile_position;
-        float       penetration;
+        Collisions::Axis    axis;
+        Character           *character;
+        Vector2f            tile_position;
+        float               penetration;
+};
+
+class CharactersCollision
+{
+    public:
+        CharactersCollision(Character &c1, Character &c2, Collisions::Axis axis);
+        
+        Character           *c1;
+        Character           *c2;
+        Collisions::Axis    axis;
 };
 
 class Physic : public Module
@@ -42,7 +48,9 @@ class Physic : public Module
         void            update(RigidBody &body, float delta_time) const;
         void            move(World &world, float delta_time) const;
         void            resolveCollisions(World &world) const;
-        void            clearAllAccumulators(World &world) const ;
+        void            clearAllAccumulators(World &world) const;
+
+        void            generateCollisions(std::list<std::unique_ptr<Character>> &characters) const;
 
         //Only foreground are used for physic (if tile.id != 0 -> solid)
         std::priority_queue<TileCollision>  generateCollisions(const Terrain &terrain, Character &body) const;

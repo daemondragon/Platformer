@@ -15,9 +15,12 @@ class Logic : public Module
 
         virtual void update(World &world, bool &quit);
 
-        void placeOnGround(const TileCollision &col);
-
     private:
+        void removeDeadCharacters(World &world);
+    
+        void placeOnGround(const TileCollision &col);
+        void stomp(const CharactersCollision &col);
+    
         bool loadTilesInfos(const std::string &filename);
         bool loadCharactersInfos(const std::string &filename);
 };

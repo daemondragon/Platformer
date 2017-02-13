@@ -11,6 +11,7 @@ Logic::Logic()
     loadCharactersInfos("data/infos/characters.txt");
 
     EventManager<TileCollision>::addListener([this](const TileCollision &col){this->placeOnGround(col);});
+    EventManager<CharactersCollision>::addListener([this](const CharactersCollision &col){this->stomp(col);});
 }
 
 bool Logic::loadCharactersInfos(const std::string &filename)
@@ -67,13 +68,46 @@ bool Logic::loadCharactersInfos(const std::string &filename)
 
 void Logic::update(World &world, bool &quit)
 {
+    removeDeadCharacters(world);
+
     for (auto &character : world.characters)
         if (character->controller)
             character->controller->update(*character);
 }
 
+void Logic::removeDeadCharacters(World &world)
+{
+    for (auto it = world.characters.begin(); it != world.characters.end();)
+    {
+        if ((*it)->isDead())
+        {
+            //raise event ?
+            it = world.characters.erase(it);
+        }
+        else
+             ++it;
+    }
+}
+
 void Logic::placeOnGround(const TileCollision &col)
 {
-    if (col.character && col.axis == TileCollision::Axis::Y && col.tile_position.y > col.character->body.position.y)
+    if (col.character && col.axis == Collisions::Axis::Y && col.tile_position.y > col.character->body.position.y)
         col.character->on_ground = true;
+}
+
+void Logic::stomp(const CharactersCollision &col)
+{
+    if (col.axis == Collisions::Axis::Y)
+    {
+        if (col.c1->body.position.y < col.c2->body.position.y)
+        {
+            col.c2->kill();
+            col.c1->body.velocity.y -= col.c1->getInfos().jump_velocity;
+        }
+        else
+        {
+            col.c1->kill();
+            col.c2->body.velocity.y -= col.c2->getInfos().jump_velocity;
+        }
+    }
 }

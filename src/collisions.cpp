@@ -31,6 +31,12 @@ float getPenetrationOnYAxis(const RigidBody &b1, const RigidBody &b2)
     }
 }
 
+Vector2f getPenetration(const RigidBody &b1, const RigidBody &b2)
+{
+    return (Vector2f(getPenetrationOnXAxis(b1, b2),
+                     getPenetrationOnYAxis(b1, b2)));
+}
+
 bool collide(const RigidBody &b1, const RigidBody &b2)
 {
     return (getPenetrationOnXAxis(b1, b2) != 0.f &&
@@ -46,14 +52,25 @@ void resolveWithDynamic(RigidBody &b1, RigidBody &b2)
 
     if (penetration.x > penetration.y)
     {// X axis collision
-        float center_x = (b1.position.x + b2.position.x) * 0.5f;
+        float velocity_sum = b1.velocity.x + b2.velocity.x;
+
+        float ratio = 0.5f;
+        if (velocity_sum != 0.f)
+            ratio = b1.velocity.x / velocity_sum;
+
         if (b1.position.x < b2.position.x)
         {
+            //Don't swap ratio and (1- ratio). If so, also swap first b1_velocity_sum in ratio calcil by b2...
+            float center_x = (b1.position.x + b1.size.x) * ratio +
+                             (b2.position.x) * (1 - ratio);
             b1.position.x = center_x - b1.size.x;
             b2.position.x = center_x;
         }
         else
         {
+            //Don't swap ratio and (1- ratio). If so, also swap first b1_velocity_sum in ratio calcil by b2...
+            float center_x = (b1.position.x) * ratio +
+                             (b2.position.x + b2.size.x) * (1 - ratio);
             b1.position.x = center_x;
             b2.position.x = center_x - b2.size.x;
         }
@@ -61,14 +78,24 @@ void resolveWithDynamic(RigidBody &b1, RigidBody &b2)
     }
     else
     {// Y axis collision
-        float center_y = (b1.position.y + b2.position.y) * 0.5f;
+        float velocity_sum = b1.velocity.y + b2.temp_velocity.y;
+        float ratio = 0.5f;
+        if (velocity_sum != 0.f)
+            ratio = b1.velocity.y / velocity_sum;
+
         if (b1.position.y < b2.position.y)
         {
+            //Don't swap ratio and (1- ratio). If so, also swap first b1_velocity_sum in ratio calcil by b2...
+            float center_y = (b1.position.y + b1.size.y) * ratio +
+                             (b2.position.y) * (1 - ratio);
             b1.position.y = center_y - b1.size.y;
             b2.position.y = center_y;
         }
         else
         {
+            //Don't swap ratio and (1- ratio). If so, also swap first b1_velocity_sum in ratio calcil by b2...
+            float center_y = (b1.position.y) * ratio +
+                             (b2.position.y + b2.size.y) * (1 - ratio);
             b1.position.y = center_y;
             b2.position.y = center_y - b2.size.y;
         }

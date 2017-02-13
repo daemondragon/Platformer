@@ -32,12 +32,18 @@ class Character : public Object<CharacterInfos>
 
         void                        perform(const Action &action);
 
+        bool                        isDead() const;
+        void                        kill();
+
         RigidBody                   body;
         Direction                   direction;
         bool                        on_ground;
         Bow                         bow;
 
         std::shared_ptr<Controller> controller;
+
+    private:
+        bool    is_dead;
 };
 
 #endif
