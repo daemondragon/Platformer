@@ -93,6 +93,8 @@ void Window::render(World &world, sf::View &view)
 
     for (auto &character : world.characters)
         render(*character);
+    for (auto &arrow : world.arrows)
+        render(*arrow);
 
     render(world.terrain, Terrain::Ground::Fore);
 
@@ -152,6 +154,15 @@ void Window::render(Character &character)
                           (character.body.position.y + character.body.size.y / 2 + relative_position.y) * tile_size.y);
 
     screen.draw(aim);
+}
+
+void Window::render(Arrow &arrow)
+{
+    sf::CircleShape a(tile_size.x / 8);
+    a.setFillColor(sf::Color(0, 255, 0));
+    
+    a.setPosition(arrow.body.position.x * tile_size.x, arrow.body.position.y * tile_size.y);
+    screen.draw(a);
 }
 
 void Window::loadTextures()

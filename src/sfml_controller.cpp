@@ -6,9 +6,6 @@
 #include <SFML/Graphics.hpp>
 
 
-
-#include <iostream>
-
 void KeyboardController::update(Character &character)
 {
     if (!sf::Keyboard::isKeyPressed(sf::Keyboard::A))
@@ -23,21 +20,8 @@ void KeyboardController::update(Character &character)
     else
     {//Aim
         Vector2f direction(0.f, 0.f);
-        static bool pressed = false;
-        static bool up = false;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Left))
-        {
             direction.x -= 1.f;
-            pressed = true;
-        }
-        else
-        {
-            if (pressed)
-            {
-                up = true;
-            }
-            pressed = false;
-        }
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Right))
             direction.x += 1.f;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up))
@@ -45,13 +29,10 @@ void KeyboardController::update(Character &character)
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down))
             direction.y += 1.f;
 
-        if (up)
-        {
-            up = false;
-            std::cout << direction.x << ";" << direction.y << std::endl;
-        }
-
         character.perform(Aim(direction));
+
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
+            character.perform(FireArrow());
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
@@ -83,7 +64,10 @@ void GamepadController::update(Character &character)
         if (passThreshold(aim_direction))
             character.perform(Aim(aim_direction));
         else
-            character.perform(Aim(Vector2f(0.f, 0.f)));   
+            character.perform(Aim(Vector2f(0.f, 0.f))); 
+
+        if (sf::Joystick::isButtonPressed(id, 2))
+        character.perform(FireArrow());  
     }
 
     if (sf::Joystick::isButtonPressed(id, 0))

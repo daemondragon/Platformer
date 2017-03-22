@@ -41,4 +41,11 @@ class StopAim : public Action
     public:
         virtual void perform(Character &character) const;
 };
+
+class FireArrow : public Action
+{
+    public:
+        virtual void perform(Character &character) const;
+};
+
 #endif

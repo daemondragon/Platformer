@@ -60,3 +60,27 @@ void StopAim::perform(Character &character) const
     character.bow.direction = Bow::Direction::Front;
 }
 
+void FireArrow::perform(Character &character) const
+{
+    if (character.bow.arrows.empty())
+        return;
+
+    std::unique_ptr<Arrow> arrow = std::move(character.bow.arrows.front());
+    character.bow.arrows.pop_front();
+    
+    arrow->body.position = character.body.position;
+    if ((int)character.bow.direction & (int)Bow::Direction::Top)
+        arrow->body.velocity.y = -1.f;
+    else if ((int)character.bow.direction & (int)Bow::Direction::Bottom)
+        arrow->body.velocity.y = -1.f;
+    else
+        arrow->body.velocity.y = 0;
+
+    if ((int)character.bow.direction & (int)Bow::Direction::Front)
+        arrow->body.velocity.x = (character.direction == Character::Direction::Left ? -1 : 1);
+    else
+        arrow->body.velocity.x = 0;
+
+    arrow->body.velocity.normalize();
+}
+

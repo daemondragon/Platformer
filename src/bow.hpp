@@ -1,7 +1,10 @@
 #ifndef BOW_HPP
 #define BOW_HPP
 
+#include <memory>
 #include <list>
+
+#include "arrow.hpp"
 
 class Bow
 {
@@ -17,7 +20,8 @@ class Bow
             BottomFront = 0x06,
         };
         
-        Direction   direction;
+        Direction                           direction;
+        std::list<std::unique_ptr<Arrow>>   arrows;
 };
 
 #endif

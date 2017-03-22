@@ -6,6 +6,7 @@
 
 #include "character.hpp"
 #include "terrain.hpp"
+#include "arrow.hpp"
 
 class World
 {
@@ -14,6 +15,7 @@ class World
 
         Terrain terrain;
         std::list<std::unique_ptr<Character>>   characters;
+        std::list<std::unique_ptr<Arrow>>       arrows;
 };
 
 #endif

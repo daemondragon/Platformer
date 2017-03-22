@@ -5,30 +5,26 @@ namespace Collisions
 
 float getPenetrationOnXAxis(const RigidBody &b1, const RigidBody &b2)
 {
+    float result;
+
     if (b1.position.x < b2.position.x)
-    {
-        float result = b2.position.x - b1.position.x - b1.size.x;
-        return (result < 0.f ? result : 0.f);
-    }
+        result = b2.position.x - b1.position.x - b1.size.x;
     else
-    {
-        float result = b1.position.x - b2.position.x - b2.size.x;
-        return (result < 0.f ? result : 0.f);
-    }
+        result = b1.position.x - b2.position.x - b2.size.x;
+
+    return (result < 0.f ? result : 0.f);
 }
 
 float getPenetrationOnYAxis(const RigidBody &b1, const RigidBody &b2)
 {
+    float result;
+
     if (b1.position.y < b2.position.y)
-    {
-        float result = b2.position.y - b1.position.y - b1.size.y;
-        return (result < 0.f ? result : 0.f);
-    }
+        result = b2.position.y - b1.position.y - b1.size.y;
     else
-    {
-        float result = b1.position.y - b2.position.y - b2.size.y;
-        return (result < 0.f ? result : 0.f);
-    }
+        result = b1.position.y - b2.position.y - b2.size.y;
+
+    return (result < 0.f ? result : 0.f);
 }
 
 Vector2f getPenetration(const RigidBody &b1, const RigidBody &b2)

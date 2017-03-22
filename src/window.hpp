@@ -29,6 +29,7 @@ class Window : public Module
         void    render(World &world, sf::View &view);
         void    render(Terrain &terrain, Terrain::Ground ground);
         void    render(Character &character);
+        void    render(Arrow &arrow);
 
         void    loadTextures();
 

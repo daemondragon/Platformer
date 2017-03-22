@@ -2,5 +2,5 @@
 
 void Arrow::hit(Character &character)
 {
-    //TODO: kill player
+    character.kill();
 }
