@@ -37,6 +37,18 @@ void KeyboardController::update(Character &character)
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         character.perform(Jump());
+
+    static bool can_rotate = true;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && can_rotate)
+    {
+        if (can_rotate)
+        {
+            can_rotate = false;
+            character.bow.rotateQuiver();
+        }
+    }
+    else
+        can_rotate = true;
 }
 
 GamepadController::GamepadController(unsigned short id, float threshold) : id(id), threshold(threshold)
@@ -64,14 +76,26 @@ void GamepadController::update(Character &character)
         if (passThreshold(aim_direction))
             character.perform(Aim(aim_direction));
         else
-            character.perform(Aim(Vector2f(0.f, 0.f))); 
+            character.perform(Aim(Vector2f(0.f, 0.f)));
 
         if (sf::Joystick::isButtonPressed(id, 2))
-        character.perform(FireArrow());  
+        character.perform(FireArrow());
     }
 
     if (sf::Joystick::isButtonPressed(id, 0))
         character.perform(Jump());
+
+    static bool can_rotate = true;
+    if (sf::Joystick::isButtonPressed(id, 3) && can_rotate)
+    {
+        if (can_rotate)
+        {
+            can_rotate = false;
+            character.bow.rotateQuiver();
+        }
+    }
+    else
+        can_rotate = true;
 }
 
 bool GamepadController::passThreshold(const Vector2f &input_axis)

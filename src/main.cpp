@@ -27,8 +27,8 @@ int main(int argc, char *argv[])
             }
         }
     }
-    if (!game.world.terrain.save("test.ct"))
-        std::cout << "failed saving" << std::endl;
+    //if (!game.world.terrain.save("test.ct"))
+        //std::cout << "failed saving" << std::endl;
 
     std::shared_ptr<KeyboardController> keyboard(new KeyboardController());
     std::shared_ptr<GamepadController> gamepad(new GamepadController(0));
@@ -61,5 +61,5 @@ int main(int argc, char *argv[])
     game.add(physic);
     game.add(logic);
 
-    game.runLoop();    
+    game.runLoop();
 }

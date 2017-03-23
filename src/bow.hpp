@@ -9,7 +9,9 @@
 class Bow
 {
     public:
-        Bow();
+                                Bow();
+
+        void                    rotateQuiver();
 
         enum class Direction
         {
@@ -19,7 +21,7 @@ class Bow
             TopFront    = 0x03,
             BottomFront = 0x06,
         };
-        
+
         Direction                           direction;
         std::list<std::unique_ptr<Arrow>>   arrows;
 };

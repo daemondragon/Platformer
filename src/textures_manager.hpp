@@ -10,7 +10,7 @@ class TexturesManager
     public:
         bool    load(const std::string &filename, Type type, unsigned short id)
         {
-            int t = (int)type;
+            unsigned short t = (unsigned short)type;
             if (textures.size() <= t)
                 textures.resize(t + 1);
             if (textures[t].size() <= id)

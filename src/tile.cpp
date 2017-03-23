@@ -8,3 +8,4 @@ bool Tile::isSolid() const
 {
     return (id != 0);
 }
+
