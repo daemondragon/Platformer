@@ -31,6 +31,8 @@ class Window : public Module
         void    render(Character &character);
         void    render(Arrow &arrow);
 
+        void    renderHUD(World &world);
+
         void    loadTextures();
 
         sf::Clock           clock;
@@ -43,7 +45,8 @@ class Window : public Module
         {
             Background,
             Foreground,
-            Character
+            Character,
+            Arrow
         };
 
         TexturesManager<TextureType>     textures;

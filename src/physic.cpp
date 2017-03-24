@@ -19,7 +19,7 @@ CharactersCollision::CharactersCollision(Character &c1, Character &c2, Collision
 
 }
 
-Physic::Physic() : 
+Physic::Physic() :
     gravity(Vector2f(0.f, 9.81f)), max_resolutions(3), update_step(0.016f), remaining_time(0.f)
 {
 }
@@ -83,13 +83,22 @@ void Physic::move(World &world, float delta_time) const
 {
     for (auto &character : world.characters)
         update(character->body, update_step);
+
+    for (auto &arrow : world.arrows)
+    {
+        if (arrow->body.velocity.squareLength() > 0.f)
+            update(arrow->body, update_step);
+    }
 }
 
 void Physic::resolveCollisions(World &world) const
 {
     for (auto &character : world.characters)
         resolve(generateCollisions(world.terrain, *character));
-    
+
+    for (auto &arrow : world.arrows)
+        resolveCollisions(world, *arrow);
+
     generateCollisions(world.characters);
 }
 
@@ -179,4 +188,30 @@ void Physic::resolve(const TileCollision &collision) const
 
     EventManager<TileCollision>::fire(collision);
 }
+
+void Physic::resolveCollisions(World &world, Arrow &arrow) const
+{
+    for (auto &character : world.characters)
+        if (Collisions::collide(arrow.body, character->body))
+            arrow.hit(*character);
+
+    RigidBody tile;
+    tile.size = Vector2f(1.f, 1.f);
+
+    for (int x = arrow.body.position.x; x <= arrow.body.position.x + arrow.body.size.x; ++x)
+    {
+        for (int y = arrow.body.position.y; y <= arrow.body.position.y + arrow.body.size.y; ++y)
+        {
+            tile.position.x = x;
+            tile.position.y = y;
+            if (world.terrain.isInside(x, y) && world.terrain.get(Terrain::Ground::Fore, x, y).isSolid() &&
+                Collisions::collide(arrow.body, tile))
+            {
+                Collisions::resolveWithStatic(arrow.body, tile);
+                arrow.body.velocity.clear();
+            }
+        }
+    }
+}
+
 

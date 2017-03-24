@@ -1,3 +1,0 @@
-ID              1
-SOLID           TRUE
-TRANSPARENT     TRUE

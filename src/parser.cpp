@@ -114,5 +114,5 @@ bool Parser::isSpace(char c)
 
 bool Parser::isEnd(char c)
 {
-    return (c == '\0' || c == '\n' || c == comment_start);
+    return (c == '\0' || c == '\n' || c == comment_start || c == EOF);
 }

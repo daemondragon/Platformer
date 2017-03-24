@@ -12,6 +12,7 @@ Logic::Logic()
 
     EventManager<TileCollision>::addListener([this](const TileCollision &col){this->placeOnGround(col);});
     EventManager<CharactersCollision>::addListener([this](const CharactersCollision &col){this->stomp(col);});
+    EventManager<FiredArrow>::addListener([this](const FiredArrow &fire_event){this->fireArrow(fire_event);});
 }
 
 bool Logic::loadCharactersInfos(const std::string &filename)
@@ -53,7 +54,7 @@ bool Logic::loadCharactersInfos(const std::string &filename)
                 else if (key == "JUMP_VELOCITY")
                      infos.jump_velocity = std::stof(value);
                 else
-                     std::cout << "Warning while parsing: " << key << " isn't a key" << std::endl;                   
+                     std::cout << "Warning while parsing: " << key << " isn't a key" << std::endl;
             }
             catch (std::exception &e)
             {
@@ -68,6 +69,7 @@ bool Logic::loadCharactersInfos(const std::string &filename)
 
 void Logic::update(World &world, bool &quit)
 {
+    placeArrowsInWorld(world);
     removeDeadCharacters(world);
 
     for (auto &character : world.characters)
@@ -110,4 +112,15 @@ void Logic::stomp(const CharactersCollision &col)
             col.c2->body.velocity.y -= col.c2->getInfos().jump_velocity;
         }
     }
+}
+
+void Logic::fireArrow(const FiredArrow &arrow_event)
+{
+
+    to_fire.push_back(std::move((const_cast<FiredArrow&>(arrow_event)).arrow));
+}
+
+void Logic::placeArrowsInWorld(World &world)
+{
+    world.arrows.splice(world.arrows.end(), to_fire);
 }

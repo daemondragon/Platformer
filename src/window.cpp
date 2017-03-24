@@ -98,6 +98,8 @@ void Window::render(World &world, sf::View &view)
 
     render(world.terrain, Terrain::Ground::Fore);
 
+    renderHUD(world);
+
     screen.display();
 }
 
@@ -149,7 +151,7 @@ void Window::render(Character &character)
 
     if ((int)Bow::Direction::Front & (int)character.bow.direction)
         relative_position.x = (character.direction == Character::Direction::Left ? -1.f : 1.f);
-    
+
     aim.setPosition((character.body.position.x + character.body.size.x / 2 + relative_position.x) * tile_size.x,
                           (character.body.position.y + character.body.size.y / 2 + relative_position.y) * tile_size.y);
 
@@ -158,25 +160,60 @@ void Window::render(Character &character)
 
 void Window::render(Arrow &arrow)
 {
-    sf::CircleShape a(tile_size.x / 8);
-    a.setFillColor(sf::Color(0, 255, 0));
-    
-    a.setPosition(arrow.body.position.x * tile_size.x, arrow.body.position.y * tile_size.y);
-    screen.draw(a);
+    Vector2f direction = arrow.body.velocity.normalized();
+
+    sf::Sprite sprite;
+    sf::Texture texture = textures.get(TextureType::Arrow, 0);
+
+    sprite.setTexture(texture);
+    sprite.setOrigin(texture.getSize().x, texture.getSize().y / 2);
+    sprite.rotate(arrow.body.velocity.y < 0 ? 360 - 57.2957795131 * std::acos(direction.x) :
+                                                    57.2957795131 * std::acos(direction.x));
+    sprite.setPosition(arrow.body.position.x * tile_size.x,
+                       arrow.body.position.y * tile_size.y);
+
+    screen.draw(sprite);
+}
+
+void Window::renderHUD(World &world)
+{
+    sf::Sprite sprite;
+    sf::Texture texture = textures.get(TextureType::Arrow, 0);
+    Vector2f arrow_size(texture.getSize().x / 2, texture.getSize().y / 2);
+    sprite.setTexture(texture);
+    sprite.setOrigin(arrow_size.x * 2, arrow_size.y * 2);
+    sprite.rotate(90);
+    sprite.scale(0.5f, 0.5f);
+
+    for (auto &character : world.characters)
+    {
+        int nb_arrows = character->bow.arrows.size();
+        Vector2f offset((character->body.position.x + character->body.size.x / 2) * tile_size.x - (nb_arrows / 2 + (nb_arrows % 2 == 0 ? 1 : 1.5f)) * arrow_size.x,
+                         character->body.position.y * tile_size.y - arrow_size.y);
+        int i = 0;
+        for (auto &arrow : character->bow.arrows)
+        {
+            ++i;
+            sprite.setPosition(offset.x + i * arrow_size.x, offset.y);
+            screen.draw(sprite);
+        }
+    }
 }
 
 void Window::loadTextures()
 {
-    textures.load("data/images/back_0.png", TextureType::Background, 0);
-    textures.load("data/images/back_1.png", TextureType::Background, 1);
-    textures.load("data/images/back_2.png", TextureType::Background, 2);
-    textures.load("data/images/back_3.png", TextureType::Background, 3);
-    textures.load("data/images/back_4.png", TextureType::Background, 4);
+    textures.load("data/images/background/0.png", TextureType::Background, 0);
+    textures.load("data/images/background/1.png", TextureType::Background, 1);
+    textures.load("data/images/background/2.png", TextureType::Background, 2);
+    textures.load("data/images/background/3.png", TextureType::Background, 3);
+    textures.load("data/images/background/4.png", TextureType::Background, 4);
 
-    textures.load("data/images/fore_0.png", TextureType::Foreground, 0);
-    textures.load("data/images/fore_1.png", TextureType::Foreground, 1);
-    textures.load("data/images/fore_2.png", TextureType::Foreground, 2);
-    textures.load("data/images/fore_3.png", TextureType::Foreground, 3);
-    textures.load("data/images/fore_4.png", TextureType::Foreground, 4);
+    textures.load("data/images/foreground/0.png", TextureType::Foreground, 0);
+    textures.load("data/images/foreground/1.png", TextureType::Foreground, 1);
+    textures.load("data/images/foreground/2.png", TextureType::Foreground, 2);
+    textures.load("data/images/foreground/3.png", TextureType::Foreground, 3);
+    textures.load("data/images/foreground/4.png", TextureType::Foreground, 4);
+
+    textures.load("data/images/arrows.png", TextureType::Arrow, 0);
 }
 

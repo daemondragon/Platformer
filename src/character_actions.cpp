@@ -1,5 +1,8 @@
 #include "character_actions.hpp"
 
+#include "event_manager.hpp"
+#include "logic.hpp"
+
 void Jump::perform(Character &character) const
 {
     if (character.on_ground)
@@ -42,7 +45,7 @@ void Aim::perform(Character &character) const
                                                    Character::Direction::Right);
         if (std::abs(direction.x) > std::abs(direction.y))
             character.bow.direction = Bow::Direction::Front;
-        else   
+        else
             character.bow.direction = (direction.y < 0.f ? Bow::Direction::Top :
                                                            Bow::Direction::Bottom);
     }
@@ -65,22 +68,37 @@ void FireArrow::perform(Character &character) const
     if (character.bow.arrows.empty())
         return;
 
-    std::unique_ptr<Arrow> arrow = std::move(character.bow.arrows.front());
+    FiredArrow fired_arrow;
+    fired_arrow.arrow = std::move(character.bow.arrows.front());
     character.bow.arrows.pop_front();
-    
-    arrow->body.position = character.body.position;
+
     if ((int)character.bow.direction & (int)Bow::Direction::Top)
-        arrow->body.velocity.y = -1.f;
+        fired_arrow.arrow->body.velocity.y = -1.f;
     else if ((int)character.bow.direction & (int)Bow::Direction::Bottom)
-        arrow->body.velocity.y = -1.f;
+        fired_arrow.arrow->body.velocity.y = 1.f;
     else
-        arrow->body.velocity.y = 0;
+        fired_arrow.arrow->body.velocity.y = 0;
 
     if ((int)character.bow.direction & (int)Bow::Direction::Front)
-        arrow->body.velocity.x = (character.direction == Character::Direction::Left ? -1 : 1);
+        fired_arrow.arrow->body.velocity.x = (character.direction == Character::Direction::Left ? -1 : 1);
     else
-        arrow->body.velocity.x = 0;
+        fired_arrow.arrow->body.velocity.x = 0;
 
-    arrow->body.velocity.normalize();
+    fired_arrow.arrow->body.velocity.normalize();
+    fired_arrow.arrow->body.velocity *= 10;
+
+
+    fired_arrow.arrow->body.position = character.body.position + character.body.size * 0.5f;
+    if (fired_arrow.arrow->body.velocity.x < 0.f)
+        fired_arrow.arrow->body.position.x -= character.body.size.x;
+    else if (fired_arrow.arrow->body.velocity.x > 0.f)
+        fired_arrow.arrow->body.position.x += character.body.size.x;
+
+    if (fired_arrow.arrow->body.velocity.y < 0.f)
+        fired_arrow.arrow->body.position.y -= character.body.size.y;
+    else if (fired_arrow.arrow->body.velocity.y > 0.f)
+        fired_arrow.arrow->body.position.y += character.body.size.y;
+
+    EventManager<FiredArrow>::fire(fired_arrow);
 }
 

@@ -1,6 +1,7 @@
 #include "sfml_controller.hpp"
 
 #include "character_actions.hpp"
+#include "logic.hpp"
 
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
@@ -31,15 +32,22 @@ void KeyboardController::update(Character &character)
 
         character.perform(Aim(direction));
 
+        static bool previously_fire_pressed = false;
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z))
-            character.perform(FireArrow());
+        {
+            if (!previously_fire_pressed)
+                character.perform(FireArrow());
+            previously_fire_pressed = true;
+        }
+        else
+            previously_fire_pressed = false;
     }
 
     if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
         character.perform(Jump());
 
     static bool can_rotate = true;
-    if (sf::Keyboard::isKeyPressed(sf::Keyboard::R) && can_rotate)
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::R))
     {
         if (can_rotate)
         {
@@ -78,15 +86,22 @@ void GamepadController::update(Character &character)
         else
             character.perform(Aim(Vector2f(0.f, 0.f)));
 
-        if (sf::Joystick::isButtonPressed(id, 2))
-        character.perform(FireArrow());
+        static bool previously_fire_pressed = false;
+        if (sf::Joystick::isButtonPressed(id, 3))
+        {
+            if (!previously_fire_pressed)
+                character.perform(FireArrow());
+            previously_fire_pressed = true;
+        }
+        else
+            previously_fire_pressed = false;
     }
 
     if (sf::Joystick::isButtonPressed(id, 0))
         character.perform(Jump());
 
     static bool can_rotate = true;
-    if (sf::Joystick::isButtonPressed(id, 3) && can_rotate)
+    if (sf::Joystick::isButtonPressed(id, 2))
     {
         if (can_rotate)
         {

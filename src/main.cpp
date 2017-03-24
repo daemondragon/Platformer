@@ -39,11 +39,24 @@ int main(int argc, char *argv[])
     game.world.characters.front()->controller = gamepad;
     game.world.characters.front()->bow.arrows.push_back(std::move(std::unique_ptr<Arrow>(new Arrow())));
 
+    for (int i = 0; i < 10; ++i)
+    {
+        std::unique_ptr<Arrow> arrow(new Arrow());
+        arrow->body.size = Vector2f(0.25f, 0.25f);
+        game.world.characters.front()->bow.arrows.push_back(std::move(arrow));
+    }
+
     game.world.characters.push_front(std::move(std::unique_ptr<Character>(new Character())));
     game.world.characters.front()->body.position = Vector2f(5.f, 3.f);
     game.world.characters.front()->body.size = Vector2f(0.95, 1.95);
     game.world.characters.front()->controller = keyboard;
-    game.world.characters.front()->bow.arrows.push_back(std::move(std::unique_ptr<Arrow>(new Arrow())));
+
+    for (int i = 0; i < 10; ++i)
+    {
+        std::unique_ptr<Arrow> arrow(new Arrow());
+        arrow->body.size = Vector2f(0.25f, 0.25f);
+        game.world.characters.front()->bow.arrows.push_back(std::move(arrow));
+    }
 
     Window window(640, 480, "squarevilles");
     window.setTileSize(sf::Vector2u(16, 16));

@@ -6,6 +6,12 @@
 #include "physic.hpp"
 #include "game.hpp"
 
+class FiredArrow
+{
+    public:
+        std::unique_ptr<Arrow>   arrow;
+};
+
 //Handle all the game logic
 class Logic : public Module
 {
@@ -17,12 +23,17 @@ class Logic : public Module
 
     private:
         void removeDeadCharacters(World &world);
-    
+
         void placeOnGround(const TileCollision &col);
         void stomp(const CharactersCollision &col);
-    
+
+        void fireArrow(const FiredArrow &arrow_event);
+        void placeArrowsInWorld(World &world);
+
         bool loadTilesInfos(const std::string &filename);
         bool loadCharactersInfos(const std::string &filename);
+
+        std::list<std::unique_ptr<Arrow>> to_fire;
 };
 
 #endif

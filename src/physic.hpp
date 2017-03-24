@@ -24,7 +24,7 @@ class CharactersCollision
 {
     public:
         CharactersCollision(Character &c1, Character &c2, Collisions::Axis axis);
-        
+
         Character           *c1;
         Character           *c2;
         Collisions::Axis    axis;
@@ -56,6 +56,8 @@ class Physic : public Module
         std::priority_queue<TileCollision>  generateCollisions(const Terrain &terrain, Character &body) const;
         void                                resolve(std::priority_queue<TileCollision> collisions) const;
         void                                resolve(const TileCollision &collision) const;
+
+        void                                resolveCollisions(World &world, Arrow &arrow) const;
 
         Vector2f        gravity;
         //Never try to correct more than max_resolutions collisions per frames, even if they are no longer valid
