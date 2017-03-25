@@ -10,10 +10,9 @@
 #include "HUD_renderer.hpp"
 
 Window::Window(unsigned short width, unsigned short height, std::string title) :
-    screen(sf::VideoMode(width, height), title), tile_size(8, 8), zoom(1)
+    screen(sf::VideoMode(width, height), title), tile_size(8, 8), split_screen(screen, width / height)
 {
-    //Show loading screen ?
-    view = screen.getView();
+    split_screen.addViews(2);
 
     addRenderer(std::move(std::unique_ptr<BackgroundRenderer>   (new BackgroundRenderer())));
     addRenderer(std::move(std::unique_ptr<CharacterRenderer>    (new CharacterRenderer())));
@@ -35,8 +34,10 @@ sf::Vector2u Window::getTileSize() const
 
 void Window::setZoom(unsigned char zoom)
 {
+    /*
     this->zoom = zoom > 0 ? zoom : 1;
     view.zoom(1.f / this->zoom);
+    */
 }
 
 void Window::setDesiredFPS(unsigned char fps)
@@ -77,9 +78,12 @@ void Window::update(World &world, bool &quit)
     clock.restart();
     screen.clear();
 
-    centerViewAt(view, world.terrain,
-                 world.characters.front()->body.position + world.characters.front()->body.size * 0.5f);
-    render(world, view);
+    for (int i = 0; i < split_screen.getNbViews(); ++i)
+    {
+        sf::View view = split_screen.getView(i);
+        centerViewAt(view, world.terrain, world.characters.front()->body.position + world.characters.front()->body.size * 0.5f);
+        render(world, view);
+    }
 
     screen.display();
 
@@ -98,11 +102,28 @@ void Window::processInput(World &world, bool &quit)
             quit = true;
         }
         else if (event.type == sf::Event::Resized)
-        {
-            view.setSize(event.size.width, event.size.height);
-            view.zoom(1.f / zoom);
-        }
+            split_screen.updateViews();
     }
+
+    static bool o_p = false;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::O))
+    {
+        if (!o_p)
+            split_screen.removeViews(1);
+        o_p = true;
+    }
+    else
+        o_p = false;
+
+    static bool p_p = false;
+    if (sf::Keyboard::isKeyPressed(sf::Keyboard::P))
+    {
+        if (!p_p)
+            split_screen.addViews(1);
+        p_p = true;
+    }
+    else
+        p_p = false;
 }
 
 void Window::render(World &world, sf::View &view)

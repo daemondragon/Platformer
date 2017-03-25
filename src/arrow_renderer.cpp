@@ -9,7 +9,7 @@ void ArrowRenderer::render(sf::RenderWindow &screen, sf::Vector2u tile_size, Wor
 {
     for (auto &arrow : world.arrows)
     {
-        Vector2f direction = (arrow->body.velocity.squareLength() > 0 ? arrow->body.velocity.normalized() : Vector2f(0, 0));
+        Vector2f direction = (arrow->body.velocity.squareLength() > 0 ? arrow->body.velocity.normalized() : arrow->previous_velocity.normalized());
 
         sf::Sprite sprite;
         sf::Texture texture = textures.get(0);

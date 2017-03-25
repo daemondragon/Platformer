@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #include "textures_manager.hpp"
+#include "split_screen.hpp"
 #include "game.hpp"
 
 class Renderer
@@ -34,27 +35,17 @@ class Window : public Module
 
         void            addRenderer(std::unique_ptr<Renderer> renderer);
 
-        void            update(World &world, bool &quit);
+        virtual void    update(World &world, bool &quit);
 
     private:
-        void    processInput(World &world, bool &quit);
-
-        void    render(World &world, sf::View &view);
-        void    render(Terrain &terrain, Terrain::Ground ground);
-        void    render(Character &character);
-        void    render(Arrow &arrow);
-
-        void    renderHUD(World &world);
-        void    renderDeadCharacters(World &world);
-
-        void    loadTextures();
-        void    addDeadCharacter(const DeadCharacter &dead);
+        void            processInput(World &world, bool &quit);
+        void            render(World &world, sf::View &view);
 
         sf::Clock           clock;
         sf::RenderWindow    screen;
         sf::Vector2u        tile_size;
-        unsigned char       zoom;
-        sf::View            view;
+        SplitScreen         split_screen;
+
 
         std::list<std::pair<std::shared_ptr<Character>, float>>   dead_characters;
         std::vector<std::unique_ptr<Renderer>>  renderers;

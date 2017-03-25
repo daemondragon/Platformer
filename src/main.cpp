@@ -61,7 +61,7 @@ int main(int argc, char *argv[])
     Window window(640, 480, "squarevilles");
     window.setTileSize(sf::Vector2u(16, 16));
     window.setDesiredFPS(120);
-    window.setZoom(2);
+    window.setZoom(3);
 
     Physic physic;
     physic.setGravity(Vector2f(0.f, 9.81f));

@@ -11,6 +11,7 @@ class Arrow
         virtual void    hit(Character &character);
 
         RigidBody       body;
+        Vector2f        previous_velocity;
 };
 
 #endif

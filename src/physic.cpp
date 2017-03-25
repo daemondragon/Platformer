@@ -87,7 +87,10 @@ void Physic::move(World &world, float delta_time) const
     for (auto &arrow : world.arrows)
     {
         if (arrow->body.velocity.squareLength() > 0.f)
+        {
+            arrow->previous_velocity = arrow->body.velocity;
             update(arrow->body, update_step);
+        }
     }
 }
 
