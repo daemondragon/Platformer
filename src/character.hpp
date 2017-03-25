@@ -46,4 +46,10 @@ class Character : public Object<CharacterInfos>
         bool    is_dead;
 };
 
+class DeadCharacter
+{
+    public:
+        std::shared_ptr<Character>  character;
+};
+
 #endif

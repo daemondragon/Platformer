@@ -4,28 +4,24 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-template <typename Type>
 class TexturesManager
 {
     public:
-        bool    load(const std::string &filename, Type type, unsigned short id)
+        bool    load(const std::string &filename, unsigned short id)
         {
-            unsigned short t = (unsigned short)type;
-            if (textures.size() <= t)
-                textures.resize(t + 1);
-            if (textures[t].size() <= id)
-                textures[t].resize(id + 1);
+            if (textures.size() <= id)
+                textures.resize(id + 1);
 
-            return (textures[t][id].loadFromFile(filename));
+            return (textures[id].loadFromFile(filename));
         }
 
-        sf::Texture&    get(Type type, unsigned short id)
+        sf::Texture&    get(unsigned short id)
         {
-            return (textures[(int)type][id]);
+            return (textures[id]);
         }
-    
+
     private:
-        std::vector<std::vector<sf::Texture>>   textures;
+        std::vector<sf::Texture>   textures;
 };
 
 #endif

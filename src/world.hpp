@@ -14,8 +14,8 @@ class World
         float   delta_time;
 
         Terrain terrain;
-        std::list<std::unique_ptr<Character>>   characters;
-        std::list<std::unique_ptr<Arrow>>       arrows;
+        std::list<std::shared_ptr<Character>>   characters;
+        std::list<std::shared_ptr<Arrow>>       arrows;
 };
 
 #endif

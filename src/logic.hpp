@@ -9,7 +9,7 @@
 class FiredArrow
 {
     public:
-        std::unique_ptr<Arrow>   arrow;
+        std::shared_ptr<Arrow>   arrow;
 };
 
 //Handle all the game logic
@@ -33,7 +33,7 @@ class Logic : public Module
         bool loadTilesInfos(const std::string &filename);
         bool loadCharactersInfos(const std::string &filename);
 
-        std::list<std::unique_ptr<Arrow>> to_fire;
+        std::list<std::shared_ptr<Arrow>> to_fire;
 };
 
 #endif

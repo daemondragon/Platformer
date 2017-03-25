@@ -50,7 +50,7 @@ class Physic : public Module
         void            resolveCollisions(World &world) const;
         void            clearAllAccumulators(World &world) const;
 
-        void            generateCollisions(std::list<std::unique_ptr<Character>> &characters) const;
+        void            generateCollisions(std::list<std::shared_ptr<Character>> &characters) const;
 
         //Only foreground are used for physic (if tile.id != 0 -> solid)
         std::priority_queue<TileCollision>  generateCollisions(const Terrain &terrain, Character &body) const;

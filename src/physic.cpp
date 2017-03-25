@@ -108,7 +108,7 @@ void Physic::clearAllAccumulators(World &world) const
         character->body.clearAccumulators();
 }
 
-void Physic::generateCollisions(std::list<std::unique_ptr<Character>> &characters) const
+void Physic::generateCollisions(std::list<std::shared_ptr<Character>> &characters) const
 {
     for (auto it = characters.begin(); it != characters.end(); it++)
     {

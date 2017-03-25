@@ -83,7 +83,9 @@ void Logic::removeDeadCharacters(World &world)
     {
         if ((*it)->isDead())
         {
-            //raise event ?
+            DeadCharacter dead;
+            dead.character = *it;
+            EventManager<DeadCharacter>::fire(dead);
             it = world.characters.erase(it);
         }
         else
