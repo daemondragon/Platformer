@@ -50,6 +50,7 @@ class DeadCharacter
 {
     public:
         std::shared_ptr<Character>  character;
+        float                       respawn_time;
 };
 
 #endif

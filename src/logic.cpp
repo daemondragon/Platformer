@@ -85,6 +85,7 @@ void Logic::removeDeadCharacters(World &world)
         {
             DeadCharacter dead;
             dead.character = *it;
+            dead.respawn_time = 5.f;
             EventManager<DeadCharacter>::fire(dead);
             it = world.characters.erase(it);
         }

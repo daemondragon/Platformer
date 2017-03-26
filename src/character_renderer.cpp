@@ -1,11 +1,61 @@
 #include "character_renderer.hpp"
 
+#include "event_manager.hpp"
+
+CharacterRenderer::CharacterRenderer()
+{
+    EventManager<DeadCharacter>::addListener([this](const DeadCharacter &dead){this->addDeadCharacter(dead);});
+}
+
 void CharacterRenderer::loadTextures()
 {
+    textures.load("data/images/character/death.png", 0);
+}
 
+void CharacterRenderer::addDeadCharacter(const DeadCharacter &character)
+{
+    dead_characters.push_back(std::pair<sf::Vector2f, float>(
+        sf::Vector2f(character.character->body.position.x, character.character->body.position.y),
+        character.respawn_time));
+}
+
+void CharacterRenderer::update(float delta_time)
+{
+    for (auto it = dead_characters.begin(); it != dead_characters.end();)
+    {
+        (*it).second -= delta_time;
+
+        if ((*it).second <= 0.f)
+            it = dead_characters.erase(it);
+        else
+            ++it;
+    }
 }
 
 void CharacterRenderer::render(sf::RenderWindow &screen, sf::Vector2u tile_size, World &world)
+{
+    renderCharacters(screen, tile_size, world);
+    renderDeadCharacters(screen, tile_size, world);
+}
+
+void CharacterRenderer::renderDeadCharacters(sf::RenderWindow &screen, sf::Vector2u tile_size, World &world)
+{
+    sf::Sprite sprite;
+    sf::Texture texture = textures.get(0);
+    sprite.setTexture(texture);
+    int nb_frames = texture.getSize().x / texture.getSize().y;
+
+    for (auto &it : dead_characters)
+    {
+        int nb = (int)((it.second / 2.5f) * nb_frames) % nb_frames;
+        sprite.setTextureRect(sf::IntRect(nb * texture.getSize().y, 0, texture.getSize().y, texture.getSize().y));
+        sprite.setPosition(it.first.x * tile_size.x, it.first.y * tile_size.y);
+
+        screen.draw(sprite);
+    }
+}
+
+void CharacterRenderer::renderCharacters(sf::RenderWindow &screen, sf::Vector2u tile_size, World &world)
 {
     for (auto &character : world.characters)
     {

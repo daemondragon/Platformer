@@ -14,6 +14,7 @@ class Renderer
         //Will be called when added to the window
         virtual void loadTextures() = 0;
 
+        virtual void update(float delta_time) {}
         virtual void render(sf::RenderWindow &screen, sf::Vector2u tile_size, World &world) = 0;
     protected:
         TexturesManager  textures;

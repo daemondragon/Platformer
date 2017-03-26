@@ -28,7 +28,7 @@ int SplitScreen::getNbViews() const
     return (views.size());
 }
 
-sf::View SplitScreen::getView(int i)
+sf::View SplitScreen::getView(int i) const
 {
     return (views[i]);
 }
@@ -47,7 +47,10 @@ void SplitScreen::updateViews()
         updateViewsWithDisposition(findViewsDisposition());
 }
 
-#include <iostream>
+std::vector<sf::View>&SplitScreen::getViews()
+{
+    return (views);
+}
 
 sf::Vector2u SplitScreen::findViewsDisposition()
 {

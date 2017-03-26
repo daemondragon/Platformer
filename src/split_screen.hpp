@@ -13,12 +13,14 @@ class SplitScreen
         void        removeViews(size_t nb_views = 1);
 
         int         getNbViews() const;
-        sf::View    getView(int i);
+        sf::View    getView(int i)const;
 
         void        setOptimalRatio(float optimal_ratio);
 
         //To call when window size have been changed or player have been removed or added
         void        updateViews();
+
+        std::vector<sf::View>&  getViews();
 
     private:
         sf::Vector2u    findViewsDisposition();

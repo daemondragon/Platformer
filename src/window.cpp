@@ -78,9 +78,11 @@ void Window::update(World &world, bool &quit)
     clock.restart();
     screen.clear();
 
-    for (int i = 0; i < split_screen.getNbViews(); ++i)
+    for (auto &renderer : renderers)
+        renderer->update(world.delta_time);
+
+    for (auto &view : split_screen.getViews())
     {
-        sf::View view = split_screen.getView(i);
         centerViewAt(view, world.terrain, world.characters.front()->body.position + world.characters.front()->body.size * 0.5f);
         render(world, view);
     }
